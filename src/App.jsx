@@ -15,8 +15,6 @@ import JobsTable from "./components/JobTable";
 import Version from "./version.json";
 import { applicationsActions } from "./store/applications-slice";
 
-let isInitial = true;
-
 const App = () => {
     const dispatch = useDispatch();
     const [localData, setLocalData] = useState(null);
@@ -30,19 +28,13 @@ const App = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (isInitial) {
-            isInitial = false;
-            return;
-        }
-
-        if (applicationItems.changed) {
+        if (applicationItems.isChanged) {
             setIsOpened(false);
             dispatch(saveApplicationdata(applicationItems));
         }
     }, [applicationItems, dispatch]);
 
     const sortItems = (items) => {
-        console.log("sorting.....", items);
         if (!items) {
             return [];
         }
@@ -65,18 +57,6 @@ const App = () => {
 
             return sortDir === "asc" ? -1 : 1;
         });
-    };
-
-    const saveJob = (jobData) => {
-        setLocalData((prevLocalData) => {
-            return {
-                ...prevLocalData,
-                [jobData.jobId]: jobData
-            };
-        });
-
-        setCurrentJob(null);
-        setIsOpened(false);
     };
 
     const updateJobStatus = (jobId, jobStatus) => {
@@ -179,7 +159,7 @@ const App = () => {
                 <button onClick={clearAllJobs}>Clear All Jobs</button>
             </header>
             <main>
-                {applicationItems.items && (
+                {Object.values(applicationItems.items).length && (
                     <>
                         {viewAs === "table" ? (
                             <div>
@@ -232,7 +212,6 @@ const App = () => {
                 title={currentJob ? "Edit Job" : "Add Job"}
             >
                 <AddJob
-                    saveJob={saveJob}
                     currentJob={currentJob}
                     clearCurrentJob={clearCurrentJob}
                 />

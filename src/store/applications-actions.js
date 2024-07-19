@@ -4,18 +4,26 @@ export const fetchApplicationData = () => {
     return async (dispatch) => {
         const localStorageTracker = localStorage.getItem("applyTracker");
 
-        dispatch(
-            applicationsActions.replaceApplications({
-                items: JSON.parse(localStorageTracker).items || {}
-            })
-        );
+        if (localStorageTracker) {
+            const parsed = JSON.parse(localStorageTracker);
+
+            dispatch(
+                applicationsActions.replaceApplications({
+                    items: parsed.items || {},
+                    sort: parsed.sort || {
+                        by: "jobApplyDate",
+                        dir: "desc"
+                    }
+                })
+            );
+        }
     };
 };
 
-export const saveApplicationdata = (items) => {
-    return async (dispatch) => {
+export const saveApplicationdata = (appItems) => {
+    return async () => {
         console.log('saving...');
-        console.log(items);
-        localStorage.setItem("applyTracker", JSON.stringify(items));
+        const { items, sort } = appItems;
+        localStorage.setItem("applyTracker", JSON.stringify({ items, sort }));
     };
 };

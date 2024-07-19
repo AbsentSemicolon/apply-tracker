@@ -3,22 +3,22 @@ import { createSlice } from "@reduxjs/toolkit";
 const applicationsSlice = createSlice({
     name: "applications",
     initialState: {
+        isChanged: false,
         items: {},
-        changed: false,
         sort: {
-            by: "jobApplyDate",
-            dir: "desc"
+            by: "",
+            dir: ""
         }
     },
     reducers: {
         replaceApplications(state, action) {
             state.items = action.payload.items;
+            state.sort = action.payload.sort;
         },
         addItem(state, action) {
             const newItem = action.payload;
             let existingItem = state.items[newItem.jobId];
-            state.changed = true;
-            console.log(existingItem);
+            state.isChanged = true;
 
             if (!existingItem) {
                 state.items[newItem.jobId] = newItem;
@@ -27,6 +27,7 @@ const applicationsSlice = createSlice({
             }
         },
         sortItemList(state, action) {
+            state.isChanged = true;
             state.sort = action.payload;
         }
     }
