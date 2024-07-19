@@ -23,7 +23,7 @@ export const fetchApplicationData = () => {
 export const saveApplicationdata = (appItems) => {
     return async () => {
         console.log('saving...');
-        const { items, sort } = appItems;
-        localStorage.setItem("applyTracker", JSON.stringify({ items, sort }));
+        const { items, sort, viewAs } = appItems;
+        localStorage.setItem("applyTracker", JSON.stringify({ items, sort, viewAs }));
     };
 };

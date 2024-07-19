@@ -8,7 +8,8 @@ const applicationsSlice = createSlice({
         sort: {
             by: "",
             dir: ""
-        }
+        },
+        viewAs: "tiles"
     },
     reducers: {
         replaceApplications(state, action) {
@@ -29,6 +30,10 @@ const applicationsSlice = createSlice({
         sortItemList(state, action) {
             state.isChanged = true;
             state.sort = action.payload;
+        },
+        setViewAs(state, action) {
+            state.isChanged = true;
+            state.viewAs = action.payload;
         }
     }
 

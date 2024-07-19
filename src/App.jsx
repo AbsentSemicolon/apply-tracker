@@ -20,7 +20,6 @@ const App = () => {
     const [localData, setLocalData] = useState(null);
     const [currentJob, setCurrentJob] = useState(null);
     const [isOpened, setIsOpened] = useState(false);
-    const [viewAs, setViewAs] = useState("tiles");
     const applicationItems = useSelector((state) => state.appList);
 
     useEffect(() => {
@@ -57,6 +56,13 @@ const App = () => {
 
             return sortDir === "asc" ? -1 : 1;
         });
+    };
+
+    const changeViewAs = (event) => {
+        const {
+            target: { value }
+        } = event;
+        dispatch(applicationsActions.setViewAs(value));
     };
 
     const updateJobStatus = (jobId, jobStatus) => {
@@ -147,8 +153,8 @@ const App = () => {
                     <div className="ml-2 border-l-2 pl-2">
                         View As:
                         <select
-                            value={viewAs}
-                            onChange={(event) => setViewAs(event.target.value)}
+                            value={applicationItems.viewAs}
+                            onChange={changeViewAs}
                         >
                             <option value="tiles">Tiles</option>
                             <option value="table">Table</option>
@@ -161,7 +167,7 @@ const App = () => {
             <main>
                 {Object.values(applicationItems.items).length && (
                     <>
-                        {viewAs === "table" ? (
+                        {applicationItems.viewAs === "table" ? (
                             <div>
                                 <JobsTable
                                     jobs={sortItems(applicationItems.items)}
