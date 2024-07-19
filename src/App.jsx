@@ -14,13 +14,14 @@ import Job from "./components/job";
 import JobsTable from "./components/JobTable";
 import Version from "./version.json";
 import { applicationsActions } from "./store/applications-slice";
+import { uiActions } from "./store/ui-slice";
 
 const App = () => {
     const dispatch = useDispatch();
     const [localData, setLocalData] = useState(null);
     const [currentJob, setCurrentJob] = useState(null);
-    const [isOpened, setIsOpened] = useState(false);
     const applicationItems = useSelector((state) => state.appList);
+    const uiItem = useSelector((state) => state.ui);
 
     useEffect(() => {
         dispatch(fetchApplicationData());
@@ -28,7 +29,7 @@ const App = () => {
 
     useEffect(() => {
         if (applicationItems.isChanged) {
-            setIsOpened(false);
+            dispatch(uiActions.toggleModal(false));
             dispatch(saveApplicationdata(applicationItems));
         }
     }, [applicationItems, dispatch]);
@@ -95,7 +96,7 @@ const App = () => {
 
     const editJob = (jobId) => {
         setCurrentJob(localData[jobId]);
-        setIsOpened(true);
+        dispatch(uiActions.toggleModal(true));
     };
 
     const clearCurrentJob = () => {
@@ -103,8 +104,7 @@ const App = () => {
     };
 
     const closeModal = () => {
-        setCurrentJob(null);
-        setIsOpened(false);
+        dispatch(uiActions.toggleModal(false));
     };
 
     const changeSortData = (event) => {
@@ -124,7 +124,11 @@ const App = () => {
         <>
             <header className="flex gap-3 px-4 py-2 justify-between">
                 <div className="flex">
-                    <button onClick={() => setIsOpened(true)}>Add Job</button>
+                    <button
+                        onClick={() => dispatch(uiActions.toggleModal(true))}
+                    >
+                        Add Job
+                    </button>
                     <div className="ml-2 border-l-2 pl-2">
                         <form>
                             <label>
@@ -213,7 +217,7 @@ const App = () => {
                 <p className="text-xs">Version: {Version.version}</p>
             </footer>
             <DialogModal
-                isOpened={isOpened}
+                isOpened={uiItem.modalIsVisible}
                 closeModal={closeModal}
                 title={currentJob ? "Edit Job" : "Add Job"}
             >
