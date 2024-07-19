@@ -1,6 +1,11 @@
 import "./App.css";
 
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import {
+    fetchApplicationData,
+    saveApplicationdata
+} from "./store/applications-actions";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 import AddJob from "./components/AddJob";
@@ -8,67 +13,58 @@ import DialogModal from "./components/DialogModal";
 import Job from "./components/job";
 import JobsTable from "./components/JobTable";
 import Version from "./version.json";
+import { applicationsActions } from "./store/applications-slice";
+
+let isInitial = true;
 
 const App = () => {
+    const dispatch = useDispatch();
     const [localData, setLocalData] = useState(null);
     const [currentJob, setCurrentJob] = useState(null);
     const [isOpened, setIsOpened] = useState(false);
-    const [sortData, setSortData] = useState({
-        sortDir: "asc",
-        sortType: "jobTitle"
-    });
-    const [jobsData, setJobsData] = useState([]);
     const [viewAs, setViewAs] = useState("tiles");
+    const applicationItems = useSelector((state) => state.appList);
 
     useEffect(() => {
-        const localStorageTracker = localStorage.getItem("applyTracker");
-
-        if (!localStorageTracker) {
-            setLocalData({});
-        } else {
-            setLocalData(JSON.parse(localStorageTracker));
-        }
-    }, []);
+        dispatch(fetchApplicationData());
+    }, [dispatch]);
 
     useEffect(() => {
-        if (localData) {
-            localStorage.setItem("applyTracker", JSON.stringify(localData));
-            const sortedJobs = Object.values(localData).sort((a, b) => {
-                if (sortData.sortType !== "jobApplyDate") {
-                    if (
-                        a[sortData.sortType].toUpperCase() >
-                        b[sortData.sortType].toUpperCase()
-                    ) {
-                        return sortData.sortDir === "asc" ? 1 : -1;
-                    }
-
-                    return sortData.sortDir === "asc" ? -1 : 1;
-                }
-
-                const date =
-                    new Date(b.jobApplyDate) - new Date(a.jobApplyDate);
-
-                if (date < 0) {
-                    return sortData.sortDir === "asc" ? 1 : -1;
-                }
-
-                return sortData.sortDir === "asc" ? -1 : 1;
-            });
-
-            setJobsData(() => {
-                return sortedJobs;
-            });
+        if (isInitial) {
+            isInitial = false;
+            return;
         }
-    }, [sortData, localData]);
 
-    const addJob = (newJobData) => {
-        setLocalData((prevLocalData) => {
-            return {
-                ...prevLocalData,
-                [newJobData.jobId]: newJobData
-            };
+        if (applicationItems.changed) {
+            setIsOpened(false);
+            dispatch(saveApplicationdata(applicationItems));
+        }
+    }, [applicationItems, dispatch]);
+
+    const sortItems = (items) => {
+        console.log("sorting.....", items);
+        if (!items) {
+            return [];
+        }
+        return Object.values(items).sort((a, b) => {
+            const sortBy = applicationItems.sort.by;
+            const sortDir = applicationItems.sort.dir;
+            if (sortBy !== "jobApplyDate") {
+                if (a[sortBy].toUpperCase() > b[sortBy].toUpperCase()) {
+                    return sortDir === "asc" ? 1 : -1;
+                }
+
+                return sortDir === "asc" ? -1 : 1;
+            }
+
+            const date = new Date(b.jobApplyDate) - new Date(a.jobApplyDate);
+
+            if (date < 0) {
+                return sortDir === "asc" ? 1 : -1;
+            }
+
+            return sortDir === "asc" ? -1 : 1;
         });
-        setIsOpened(false);
     };
 
     const saveJob = (jobData) => {
@@ -130,12 +126,12 @@ const App = () => {
             target: { id, value }
         } = event;
 
-        setSortData((prevSortData) => {
-            return {
-                ...prevSortData,
-                [id]: value
-            };
-        });
+        dispatch(
+            applicationsActions.sortItemList({
+                by: id === "sortBy" ? value : applicationItems.sort.by,
+                dir: id === "sortDir" ? value : applicationItems.sort.dir
+            })
+        );
     };
 
     return (
@@ -148,19 +144,19 @@ const App = () => {
                             <label>
                                 <span>Sort By: </span>
                                 <select
-                                    name="sortType"
-                                    id="sortType"
+                                    name="sortBy"
+                                    id="sortBy"
                                     onChange={changeSortData}
+                                    value={applicationItems.sort.by}
                                 >
-                                    <option value="jobTitle">
-                                        Default (Title)
-                                    </option>
+                                    <option value="jobTitle">Title</option>
                                     <option value="jobApplyDate">Date</option>
                                 </select>
                                 <select
                                     name="sortDir"
                                     id="sortDir"
                                     onChange={changeSortData}
+                                    value={applicationItems.sort.dir}
                                 >
                                     <option value="asc">Ascending</option>
                                     <option value="desc">Descending</option>
@@ -183,12 +179,12 @@ const App = () => {
                 <button onClick={clearAllJobs}>Clear All Jobs</button>
             </header>
             <main>
-                {jobsData && (
+                {applicationItems.items && (
                     <>
                         {viewAs === "table" ? (
                             <div>
                                 <JobsTable
-                                    jobs={jobsData}
+                                    jobs={sortItems(applicationItems.items)}
                                     removeJob={removeJob}
                                     editJob={editJob}
                                     updateJobStatus={updateJobStatus}
@@ -204,18 +200,23 @@ const App = () => {
                                 }}
                             >
                                 <Masonry>
-                                    {jobsData.map((job) => (
-                                        <div className="p-3" key={job.jobId}>
-                                            <Job
-                                                job={job}
-                                                removeJob={removeJob}
-                                                editJob={editJob}
-                                                updateJobStatus={
-                                                    updateJobStatus
-                                                }
-                                            />
-                                        </div>
-                                    ))}
+                                    {sortItems(applicationItems.items).map(
+                                        (job) => (
+                                            <div
+                                                className="p-3"
+                                                key={job.jobId}
+                                            >
+                                                <Job
+                                                    job={job}
+                                                    removeJob={removeJob}
+                                                    editJob={editJob}
+                                                    updateJobStatus={
+                                                        updateJobStatus
+                                                    }
+                                                />
+                                            </div>
+                                        )
+                                    )}
                                 </Masonry>
                             </ResponsiveMasonry>
                         )}
@@ -231,7 +232,6 @@ const App = () => {
                 title={currentJob ? "Edit Job" : "Add Job"}
             >
                 <AddJob
-                    addJob={addJob}
                     saveJob={saveJob}
                     currentJob={currentJob}
                     clearCurrentJob={clearCurrentJob}

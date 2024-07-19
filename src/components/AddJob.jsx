@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { applicationsActions } from "../store/applications-slice";
+import { useDispatch } from "react-redux";
 import uuid from "react-uuid";
 
 const defaultJob = {
@@ -13,6 +15,7 @@ const defaultJob = {
 };
 
 const AddJob = ({ addJob, saveJob, currentJob, clearCurrentJob }) => {
+    const dispatch = useDispatch();
     let currentDate = new Date();
     currentDate = currentDate.toISOString().split("T")[0];
 
@@ -39,12 +42,12 @@ const AddJob = ({ addJob, saveJob, currentJob, clearCurrentJob }) => {
         if (!currentJob) {
             newJob.jobStatus = "applied";
             newJob.jobId = uuid();
-            addJob(newJob);
         } else {
             newJob.jobStatus = currentJob.jobStatus;
             newJob.jobId = currentJob.jobId;
-            saveJob(newJob);
         }
+
+        dispatch(applicationsActions.addItem(newJob));
 
         setFormData(defaultJob);
     };
