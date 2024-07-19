@@ -34,6 +34,16 @@ const applicationsSlice = createSlice({
         setViewAs(state, action) {
             state.isChanged = true;
             state.viewAs = action.payload;
+        },
+        removeItem(state, action) {
+            state.isChanged = true;
+            const { [action.payload]: _, ...result } = state.items;
+
+            state.items = result;
+        },
+        removeAllItems(state) {
+            state.isChanged = true;
+            state.items = {};
         }
     }
 

@@ -82,16 +82,16 @@ const App = () => {
         const confirm = window.confirm("are you sure?");
 
         if (confirm) {
-            setLocalData((prevLocalData) => {
-                const { [jobId]: _, ...result } = prevLocalData;
-
-                return result;
-            });
+            dispatch(applicationsActions.removeItem(jobId));
         }
     };
 
     const clearAllJobs = () => {
-        setLocalData({});
+        const confirm = window.confirm("are you sure?");
+
+        if (confirm) {
+            dispatch(applicationsActions.removeAllItems());
+        }
     };
 
     const editJob = (jobId) => {
