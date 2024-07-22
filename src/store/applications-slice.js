@@ -9,7 +9,8 @@ const applicationsSlice = createSlice({
             by: "",
             dir: ""
         },
-        viewAs: "tiles"
+        viewAs: "tiles",
+        editingJob: null
     },
     reducers: {
         replaceApplications(state, action) {
@@ -24,7 +25,7 @@ const applicationsSlice = createSlice({
             if (!existingItem) {
                 state.items[newItem.jobId] = newItem;
             } else {
-                existingItem = newItem;
+                state.items[newItem.jobId] = newItem;
             }
         },
         sortItemList(state, action) {
@@ -42,12 +43,13 @@ const applicationsSlice = createSlice({
             state.items = result;
         },
         removeAllItems(state) {
-            state.isChanged = true;
             state.items = {};
+            state.isChanged = true;
+        },
+        setItemToEdit(state, action) {
+            state.editingJob = action.payload;
         }
     }
-
-
 });
 
 

@@ -1,4 +1,4 @@
-const JobStatus = ({ job, updateJobStatus }) => {
+const JobStatus = ({ job }) => {
     const jobStatusList = {
         applied: {
             title: "Applied",
@@ -27,6 +27,10 @@ const JobStatus = ({ job, updateJobStatus }) => {
         }
     };
 
+    const updateJobStatus = (event) => {
+        console.log(job.jobId, event);
+    };
+
     return (
         <>
             <select
@@ -34,9 +38,7 @@ const JobStatus = ({ job, updateJobStatus }) => {
                 id="jobStatus"
                 name="jobStatus"
                 value={job.jobStatus}
-                onChange={(event) => {
-                    updateJobStatus(job.jobId, event.target.value);
-                }}
+                onChange={updateJobStatus}
             >
                 {Object.values(jobStatusList).map((status) => {
                     return (

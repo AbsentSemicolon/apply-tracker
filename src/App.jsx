@@ -18,7 +18,6 @@ import { uiActions } from "./store/ui-slice";
 
 const App = () => {
     const dispatch = useDispatch();
-    const [localData, setLocalData] = useState(null);
     const [currentJob, setCurrentJob] = useState(null);
     const applicationItems = useSelector((state) => state.appList);
     const uiItem = useSelector((state) => state.ui);
@@ -59,25 +58,6 @@ const App = () => {
         });
     };
 
-    const changeViewAs = (event) => {
-        const {
-            target: { value }
-        } = event;
-        dispatch(applicationsActions.setViewAs(value));
-    };
-
-    const updateJobStatus = (jobId, jobStatus) => {
-        setLocalData((prevLocalData) => {
-            return {
-                ...prevLocalData,
-                [jobId]: {
-                    ...prevLocalData[jobId],
-                    jobStatus
-                }
-            };
-        });
-    };
-
     const removeJob = (jobId) => {
         const confirm = window.confirm("are you sure?");
 
@@ -95,16 +75,12 @@ const App = () => {
     };
 
     const editJob = (jobId) => {
-        setCurrentJob(localData[jobId]);
+        dispatch(applicationsActions.setItemToEdit(jobId));
         dispatch(uiActions.toggleModal(true));
     };
 
     const clearCurrentJob = () => {
         setCurrentJob(null);
-    };
-
-    const closeModal = () => {
-        dispatch(uiActions.toggleModal(false));
     };
 
     const changeSortData = (event) => {
@@ -158,7 +134,13 @@ const App = () => {
                         View As:
                         <select
                             value={applicationItems.viewAs}
-                            onChange={changeViewAs}
+                            onChange={(event) =>
+                                dispatch(
+                                    applicationsActions.setViewAs(
+                                        event.target.value
+                                    )
+                                )
+                            }
                         >
                             <option value="tiles">Tiles</option>
                             <option value="table">Table</option>
@@ -177,7 +159,6 @@ const App = () => {
                                     jobs={sortItems(applicationItems.items)}
                                     removeJob={removeJob}
                                     editJob={editJob}
-                                    updateJobStatus={updateJobStatus}
                                 />
                             </div>
                         ) : (
@@ -200,9 +181,6 @@ const App = () => {
                                                     job={job}
                                                     removeJob={removeJob}
                                                     editJob={editJob}
-                                                    updateJobStatus={
-                                                        updateJobStatus
-                                                    }
                                                 />
                                             </div>
                                         )
@@ -218,13 +196,10 @@ const App = () => {
             </footer>
             <DialogModal
                 isOpened={uiItem.modalIsVisible}
-                closeModal={closeModal}
+                closeModal={() => dispatch(uiActions.toggleModal(false))}
                 title={currentJob ? "Edit Job" : "Add Job"}
             >
-                <AddJob
-                    currentJob={currentJob}
-                    clearCurrentJob={clearCurrentJob}
-                />
+                <AddJob clearCurrentJob={clearCurrentJob} />
             </DialogModal>
         </>
     );
