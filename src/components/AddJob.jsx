@@ -130,7 +130,7 @@ const AddJob = () => {
                     type="date"
                     name="jobApplyDate"
                     id="jobApplyDate"
-                    value={formData.jobApplyDate}
+                    value={formData.jobApplyDate || currentDate}
                     onChange={updateField}
                     max={currentDate}
                     required
