@@ -19,14 +19,8 @@ const applicationsSlice = createSlice({
         },
         addItem(state, action) {
             const newItem = action.payload;
-            let existingItem = state.items[newItem.jobId];
             state.isChanged = true;
-
-            if (!existingItem) {
-                state.items[newItem.jobId] = newItem;
-            } else {
-                state.items[newItem.jobId] = newItem;
-            }
+            state.items[newItem.jobId] = newItem;
         },
         sortItemList(state, action) {
             state.isChanged = true;
@@ -48,6 +42,16 @@ const applicationsSlice = createSlice({
         },
         setItemToEdit(state, action) {
             state.editingJob = action.payload;
+        },
+        updateItemStatus(state, action) {
+            state.items[action.payload.jobId] = {
+                ...state.items[action.payload.jobId],
+                jobStatus: action.payload.status
+            };
+            state.isChanged = true;
+        },
+        clearEditingJob(state, action) {
+            state.editingJob = null;
         }
     }
 });

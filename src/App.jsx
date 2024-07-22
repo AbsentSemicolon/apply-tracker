@@ -6,7 +6,6 @@ import {
     saveApplicationdata
 } from "./store/applications-actions";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
 
 import AddJob from "./components/AddJob";
 import DialogModal from "./components/DialogModal";
@@ -15,10 +14,10 @@ import JobsTable from "./components/JobTable";
 import Version from "./version.json";
 import { applicationsActions } from "./store/applications-slice";
 import { uiActions } from "./store/ui-slice";
+import { useEffect } from "react";
 
 const App = () => {
     const dispatch = useDispatch();
-    const [currentJob, setCurrentJob] = useState(null);
     const applicationItems = useSelector((state) => state.appList);
     const uiItem = useSelector((state) => state.ui);
 
@@ -77,10 +76,6 @@ const App = () => {
     const editJob = (jobId) => {
         dispatch(applicationsActions.setItemToEdit(jobId));
         dispatch(uiActions.toggleModal(true));
-    };
-
-    const clearCurrentJob = () => {
-        setCurrentJob(null);
     };
 
     const changeSortData = (event) => {
@@ -196,10 +191,13 @@ const App = () => {
             </footer>
             <DialogModal
                 isOpened={uiItem.modalIsVisible}
-                closeModal={() => dispatch(uiActions.toggleModal(false))}
-                title={currentJob ? "Edit Job" : "Add Job"}
+                closeModal={() => {
+                    dispatch(uiActions.toggleModal(false));
+                    dispatch(applicationsActions.clearEditingJob());
+                }}
+                title={applicationItems.editingJob ? "Edit Job" : "Add Job"}
             >
-                <AddJob clearCurrentJob={clearCurrentJob} />
+                <AddJob />
             </DialogModal>
         </>
     );

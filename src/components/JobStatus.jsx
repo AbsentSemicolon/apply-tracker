@@ -1,4 +1,8 @@
+import { applicationsActions } from "../store/applications-slice";
+import { useDispatch } from "react-redux";
+
 const JobStatus = ({ job }) => {
+    const dispatch = useDispatch();
     const jobStatusList = {
         applied: {
             title: "Applied",
@@ -28,7 +32,12 @@ const JobStatus = ({ job }) => {
     };
 
     const updateJobStatus = (event) => {
-        console.log(job.jobId, event);
+        dispatch(
+            applicationsActions.updateItemStatus({
+                jobId: job.jobId,
+                status: event.target.value
+            })
+        );
     };
 
     return (

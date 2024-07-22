@@ -14,7 +14,7 @@ const defaultJob = {
     jobSalaryType: "yr"
 };
 
-const AddJob = ({ clearCurrentJob }) => {
+const AddJob = () => {
     const dispatch = useDispatch();
     let currentDate = new Date();
     currentDate = currentDate.toISOString().split("T")[0];
@@ -54,7 +54,7 @@ const AddJob = ({ clearCurrentJob }) => {
         }
 
         dispatch(applicationsActions.addItem(newJob));
-
+        dispatch(applicationsActions.clearEditingJob());
         setFormData(defaultJob);
     };
 
@@ -73,7 +73,6 @@ const AddJob = ({ clearCurrentJob }) => {
 
     const clearForm = () => {
         setFormData(defaultJob);
-        clearCurrentJob();
     };
 
     return (
