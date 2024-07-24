@@ -1,4 +1,4 @@
-import { format, formatDistanceStrict, formatDistanceToNowStrict, formatRelative } from "date-fns";
+import { format, formatDistanceToNowStrict } from "date-fns";
 
 import JobStatus from "./JobStatus";
 import { JobType } from "../lib/types";
@@ -68,7 +68,7 @@ const Job = ({ job, removeJob }: Thing) => {
             </div>
             <div>
                 <p className="text-gray-400">
-                    Applied on&nbsp; {dateFormatted}, {relative} ago
+                    Applied on {dateFormatted}, {relative} ago
                 </p>
             </div>
             {job.jobSalary && job.jobSalaryType && (
