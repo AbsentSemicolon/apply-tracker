@@ -1,3 +1,4 @@
+import { AppListSort, JobType, ReplaceAppData } from "../lib/types";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const applicationsSlice = createSlice({
@@ -10,21 +11,22 @@ const applicationsSlice = createSlice({
             dir: ""
         },
         viewAs: "tiles",
-        editingJob: null
+        editingJob: ""
     },
     reducers: {
-        replaceApplications(state, action) {
-            state.items = action.payload.items;
-            state.sort = action.payload.sort;
+        replaceApplications(state, { payload }: PayloadAction<ReplaceAppData>) {
+            state.items = payload.items;
+            state.sort = payload.sort;
+            state.viewAs = payload.viewAs;
         },
-        addItem(state, action) {
-            const newItem = action.payload;
+        addItem(state, { payload }: PayloadAction<JobType>) {
+            const newItem = payload;
             state.isChanged = true;
             state.items[newItem.jobId] = newItem;
         },
-        sortItemList(state, action) {
+        sortItemList(state, { payload }: PayloadAction<AppListSort>) {
             state.isChanged = true;
-            state.sort = action.payload;
+            state.sort = payload;
         },
         setViewAs(state, { payload }: PayloadAction<string>) {
             state.isChanged = true;
@@ -46,8 +48,8 @@ const applicationsSlice = createSlice({
             state.items = {};
             state.isChanged = true;
         },
-        setItemToEdit(state, action) {
-            state.editingJob = action.payload;
+        setItemToEdit(state, { payload }: PayloadAction<string>) {
+            state.editingJob = payload;
         },
         updateItemStatus(state, action) {
             state.items[action.payload.jobId] = {
@@ -57,7 +59,7 @@ const applicationsSlice = createSlice({
             state.isChanged = true;
         },
         clearEditingJob(state) {
-            state.editingJob = null;
+            state.editingJob = "";
         }
     }
 });

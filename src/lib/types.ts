@@ -32,12 +32,20 @@ export interface UiState {
 export interface AppListState {
     appList: {
         isChanged: boolean;
-        sort: {
-            by: string;
-            dir: string;
-        };
+        sort: AppListSort;
         viewAs: string;
         items: JobType[];
         editingJob: string;
     };
+}
+
+export interface AppListSort {
+    by: string;
+    dir: string;
+}
+
+export interface ReplaceAppData {
+    items: { [key: string]: JobType };
+    sort: AppListSort;
+    viewAs: string;
 }
