@@ -1,4 +1,4 @@
-import { AppListState, JobStatusType } from "../lib/types";
+import { AppListState, JobStatusType, JobType } from "../lib/types";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -27,7 +27,7 @@ const AddJob = () => {
 
     useEffect(() => {
         if (applicationItems.editingJob) {
-            const currentJob =
+            const currentJob: JobType =
                 applicationItems.items[applicationItems.editingJob];
 
             setFormData({
@@ -58,7 +58,7 @@ const AddJob = () => {
             newJob.jobId = currentJob.jobId;
         }
 
-        dispatch(applicationsActions.addItem(newJob));
+        dispatch(applicationsActions.addItem(newJob as JobType));
         dispatch(applicationsActions.clearEditingJob());
         setFormData(defaultJob);
     };

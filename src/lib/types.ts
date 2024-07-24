@@ -29,14 +29,16 @@ export interface UiState {
     };
 }
 
+export interface AppListType {
+    isChanged: boolean;
+    sort: AppListSort;
+    viewAs: string;
+    items: JobType[];
+    editingJob: string;
+}
+
 export interface AppListState {
-    appList: {
-        isChanged: boolean;
-        sort: AppListSort;
-        viewAs: string;
-        items: JobType[];
-        editingJob: string;
-    };
+    appList: AppListType;
 }
 
 export interface AppListSort {

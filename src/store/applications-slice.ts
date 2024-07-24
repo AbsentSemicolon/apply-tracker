@@ -20,9 +20,8 @@ const applicationsSlice = createSlice({
             state.viewAs = payload.viewAs;
         },
         addItem(state, { payload }: PayloadAction<JobType>) {
-            const newItem = payload;
             state.isChanged = true;
-            state.items[newItem.jobId] = newItem;
+            state.items[payload.jobId] = payload;
         },
         sortItemList(state, { payload }: PayloadAction<AppListSort>) {
             state.isChanged = true;

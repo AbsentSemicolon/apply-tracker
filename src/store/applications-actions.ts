@@ -1,4 +1,4 @@
-import { ReplaceAppData } from "../lib/types";
+import { AppListType } from "../lib/types";
 import { applicationsActions } from "./applications-slice";
 
 export const fetchApplicationData = () => {
@@ -22,7 +22,7 @@ export const fetchApplicationData = () => {
     };
 };
 
-export const saveApplicationdata = (appItems: ReplaceAppData) => {
+export const saveApplicationdata = (appItems: AppListType) => {
     return async () => {
         const { items, sort, viewAs } = appItems;
         localStorage.setItem(
