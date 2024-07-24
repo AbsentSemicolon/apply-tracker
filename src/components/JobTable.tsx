@@ -1,3 +1,5 @@
+import { format, formatDistanceToNowStrict } from "date-fns";
+
 import JobStatus from "./JobStatus";
 import { JobType } from "../lib/types";
 import { applicationsActions } from "../store/applications-slice";
@@ -14,6 +16,16 @@ const JobsTable = ({ jobs, removeJob }: Thing) => {
     const editJobClick = (jobId: string) => {
         dispatch(applicationsActions.setItemToEdit(jobId));
         dispatch(uiActions.toggleModal(true));
+    };
+    const getDateDisplay = (applyDate: string) => {
+        const dateFormatted = format(new Date(applyDate), "ddMMMyyyy");
+        const relative = formatDistanceToNowStrict(applyDate);
+
+        return (
+            <p>
+                {dateFormatted}<br />{relative} ago
+            </p>
+        );
     };
 
     return (
@@ -35,13 +47,7 @@ const JobsTable = ({ jobs, removeJob }: Thing) => {
                             <td className="align-text-top">{job.jobTitle}</td>
                             <td className="align-text-top">{job.jobCompany}</td>
                             <td className="align-text-top">
-                                <p>
-                                    {job.jobApplyDate}
-                                    {/*
-                                    <Moment fromNow className="text-sm">
-                                        {job.jobApplyDate}
-                                    </Moment> */}
-                                </p>
+                                {getDateDisplay(job.jobApplyDate)}
                             </td>
                             <td className="align-text-top">{job.jobSalary}</td>
                             <td className="align-text-top">

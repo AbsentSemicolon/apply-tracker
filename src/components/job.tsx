@@ -1,3 +1,5 @@
+import { format, formatDistanceStrict, formatDistanceToNowStrict, formatRelative } from "date-fns";
+
 import JobStatus from "./JobStatus";
 import { JobType } from "../lib/types";
 import { applicationsActions } from "../store/applications-slice";
@@ -19,6 +21,8 @@ const Job = ({ job, removeJob }: Thing) => {
         dispatch(applicationsActions.setItemToEdit(jobId));
         dispatch(uiActions.toggleModal(true));
     };
+    const dateFormatted = format(new Date(job.jobApplyDate), "ddMMMyyyy");
+    const relative = formatDistanceToNowStrict(job.jobApplyDate);
 
     return (
         <div
@@ -64,7 +68,7 @@ const Job = ({ job, removeJob }: Thing) => {
             </div>
             <div>
                 <p className="text-gray-400">
-                    Applied on&nbsp; {job.jobApplyDate}
+                    Applied on&nbsp; {dateFormatted}, {relative} ago
                 </p>
             </div>
             {job.jobSalary && job.jobSalaryType && (
