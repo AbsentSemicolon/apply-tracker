@@ -1,19 +1,23 @@
 import JobStatus from "./JobStatus";
 import { JobType } from "../lib/types";
+import { applicationsActions } from "../store/applications-slice";
+import { uiActions } from "../store/ui-slice";
+import { useDispatch } from "react-redux";
 
 interface Thing {
     job: JobType;
     removeJob: (arg0: string) => void;
-    editJob: (arg0: string) => void;
 }
 
-const Job = ({ job, removeJob, editJob }: Thing) => {
+const Job = ({ job, removeJob }: Thing) => {
+    const dispatch = useDispatch();
+    const { jobId } = job;
     const removeJobClick = () => {
         removeJob(job.jobId);
     };
-
     const editJobClick = () => {
-        editJob(job.jobId);
+        dispatch(applicationsActions.setItemToEdit(jobId));
+        dispatch(uiActions.toggleModal(true));
     };
 
     return (

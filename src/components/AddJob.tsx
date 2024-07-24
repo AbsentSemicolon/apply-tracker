@@ -3,6 +3,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { applicationsActions } from "../store/applications-slice";
+import { uiActions } from "../store/ui-slice";
 import uuid from "react-uuid";
 
 const defaultJob = {
@@ -60,6 +61,7 @@ const AddJob = () => {
 
         dispatch(applicationsActions.addItem(newJob as JobType));
         dispatch(applicationsActions.clearEditingJob());
+        dispatch(uiActions.toggleModal(false));
         setFormData(defaultJob);
     };
 

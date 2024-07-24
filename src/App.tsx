@@ -30,7 +30,6 @@ const App = () => {
 
     useEffect(() => {
         if (applicationItems.isChanged) {
-            dispatch(uiActions.toggleModal(false));
             dispatch(saveApplicationdata(applicationItems));
         }
     }, [applicationItems, dispatch]);
@@ -74,11 +73,6 @@ const App = () => {
         if (confirm) {
             dispatch(applicationsActions.removeAllItems());
         }
-    };
-
-    const editJob = (jobId: string) => {
-        dispatch(applicationsActions.setItemToEdit(jobId));
-        dispatch(uiActions.toggleModal(true));
     };
 
     const changeSortData = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -159,7 +153,6 @@ const App = () => {
                                 <JobsTable
                                     jobs={sortItems(applicationItems.items)}
                                     removeJob={removeJob}
-                                    editJob={editJob}
                                 />
                             </div>
                         ) : (
@@ -181,7 +174,6 @@ const App = () => {
                                                 <Job
                                                     job={job}
                                                     removeJob={removeJob}
-                                                    editJob={editJob}
                                                 />
                                             </div>
                                         )
