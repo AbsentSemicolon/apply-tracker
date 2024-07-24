@@ -64,10 +64,7 @@ const Job = ({ job, removeJob }: Thing) => {
             </div>
             <div>
                 <p className="text-gray-400">
-                    Applied on&nbsp;
-                    {/* <Moment format="DD.MMM.YYYY">
-                        {job.jobApplyDate}
-                    </Moment>, <Moment fromNow>{job.jobApplyDate}</Moment> */}
+                    Applied on&nbsp; {job.jobApplyDate}
                 </p>
             </div>
             {job.jobSalary && job.jobSalaryType && (

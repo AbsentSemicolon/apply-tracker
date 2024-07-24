@@ -36,10 +36,8 @@ const JobsTable = ({ jobs, removeJob }: Thing) => {
                             <td className="align-text-top">{job.jobCompany}</td>
                             <td className="align-text-top">
                                 <p>
-                                    {/* <Moment format="DD.MMM.YYYY">
-                                        {job.jobApplyDate}
-                                    </Moment>
-                                    <br />
+                                    {job.jobApplyDate}
+                                    {/*
                                     <Moment fromNow className="text-sm">
                                         {job.jobApplyDate}
                                     </Moment> */}
