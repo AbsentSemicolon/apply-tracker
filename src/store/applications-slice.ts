@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const applicationsSlice = createSlice({
     name: "applications",
@@ -26,13 +26,19 @@ const applicationsSlice = createSlice({
             state.isChanged = true;
             state.sort = action.payload;
         },
-        setViewAs(state, action) {
+        setViewAs(state, { payload }: PayloadAction<string>) {
             state.isChanged = true;
-            state.viewAs = action.payload;
+            state.viewAs = payload;
         },
-        removeItem(state, action) {
+        removeItem(state, { payload }: PayloadAction<string>) {
             state.isChanged = true;
-            const { [action.payload]: _, ...result } = state.items;
+
+            /* Cannot figure out how to sort out the TypeScript issue with
+             * removing a property from an Object. The code works just fine.
+             */
+            // @ts-expect-error: Unreachable code error
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { [payload]: _, ...result } = state.items;
 
             state.items = result;
         },
@@ -50,12 +56,11 @@ const applicationsSlice = createSlice({
             };
             state.isChanged = true;
         },
-        clearEditingJob(state, action) {
+        clearEditingJob(state) {
             state.editingJob = null;
         }
     }
 });
-
 
 export const applicationsActions = applicationsSlice.actions;
 

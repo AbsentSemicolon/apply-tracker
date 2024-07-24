@@ -1,7 +1,13 @@
 import JobStatus from "./JobStatus";
-import Moment from "react-moment";
+import { JobType } from "../lib/types";
 
-const Job = ({ job, removeJob, editJob }) => {
+interface Thing {
+    job: JobType;
+    removeJob: (arg0: string) => void;
+    editJob: (arg0: string) => void;
+}
+
+const Job = ({ job, removeJob, editJob }: Thing) => {
     const removeJobClick = () => {
         removeJob(job.jobId);
     };
@@ -20,7 +26,7 @@ const Job = ({ job, removeJob, editJob }) => {
                         <a
                             href={job.jobLink}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             className="text-blue-500"
                         >
                             {job.jobTitle}
@@ -39,7 +45,7 @@ const Job = ({ job, removeJob, editJob }) => {
                         <a
                             href={job.jobCompanyLink}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             className="text-blue-500"
                         >
                             {job.jobCompany}
@@ -55,9 +61,9 @@ const Job = ({ job, removeJob, editJob }) => {
             <div>
                 <p className="text-gray-400">
                     Applied on&nbsp;
-                    <Moment format="DD.MMM.YYYY">
+                    {/* <Moment format="DD.MMM.YYYY">
                         {job.jobApplyDate}
-                    </Moment>, <Moment fromNow>{job.jobApplyDate}</Moment>
+                    </Moment>, <Moment fromNow>{job.jobApplyDate}</Moment> */}
                 </p>
             </div>
             {job.jobSalary && job.jobSalaryType && (
