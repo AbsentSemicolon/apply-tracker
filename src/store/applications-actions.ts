@@ -74,7 +74,7 @@ export const fetchApplicationData = (isDemo: boolean = false) => {
                     jobSalaryMax: 0,
                     jobSalaryType: "hr",
                     jobStatus: getFake(fakeJobStatuses),
-                    jobId: uuid()
+                    jobId
                 };
 
                 fakeJobs[jobId] = job;
