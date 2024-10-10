@@ -25,7 +25,6 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Job from "./components/Job";
 import JobsTable from "./components/JobTable";
-import { motion } from "framer-motion";
 import { uiActions } from "./store/ui-slice";
 import { useEffect } from "react";
 import { useMemo } from "react";
