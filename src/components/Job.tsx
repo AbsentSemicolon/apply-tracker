@@ -35,6 +35,8 @@ const Job = ({ job, removeJob }: Thing) => {
             case JobStatusType.APPLIED:
             case JobStatusType.INTERVIEWED_SCHEDULED:
                 return "border-sky-300";
+            case JobStatusType.OFFERED:
+                return "border-green-500 bg-green-500/30";
             default:
                 return "border-gray-300";
         }
@@ -96,7 +98,7 @@ const Job = ({ job, removeJob }: Thing) => {
                 <p className="font-bold">Status</p>
                 <JobStatus job={job} />
             </div>
-            <div className="flex justify-around border-t-2 border-solid mt-2 pt-2">
+            <div className="flex justify-around border-t-2 border-dotted mt-2 pt-2 border-black">
                 <button
                     className="bg-slate-200 w-32 py-2 font-bold"
                     onClick={removeJobClick}

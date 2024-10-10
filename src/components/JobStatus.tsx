@@ -30,6 +30,10 @@ const JobStatus = ({ job }: JobStatusInput) => {
             title: "Interviewed",
             status: JobStatusType.INTERVIEWED
         },
+        offered: {
+            title: "Offered",
+            status: JobStatusType.OFFERED
+        },
         onHold: {
             title: "On Hold",
             status: JobStatusType.ON_HOLD
@@ -56,6 +60,7 @@ const JobStatus = ({ job }: JobStatusInput) => {
                 name="jobStatus"
                 value={job.jobStatus}
                 onChange={updateJobStatus}
+                className="border-2 border-gray-500 rounded-md p-1"
             >
                 {Object.values(jobStatusList).map((status) => {
                     return (
