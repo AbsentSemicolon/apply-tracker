@@ -1,8 +1,8 @@
+import { JobStatusType, JobType } from "../lib/types";
 import { format, formatDistanceToNowStrict, parseISO } from "date-fns";
 
 import JobSalary from "./JobSalary";
 import JobStatus from "./JobStatus";
-import { JobType } from "../lib/types";
 import { applicationsActions } from "../store/applications-slice";
 import { uiActions } from "../store/ui-slice";
 import { useAppDispatch } from "../hooks/hooks";
@@ -24,10 +24,27 @@ const Job = ({ job, removeJob }: Thing) => {
     };
     const dateFormatted = format(parseISO(job.jobApplyDate), "ddMMMyyyy");
     const relative = formatDistanceToNowStrict(job.jobApplyDate);
+    const getColorList = (status: JobStatusType): string => {
+        switch (status) {
+            case JobStatusType.DENIED:
+                return "border-red-300 bg-red-300/30";
+            case JobStatusType.INTERVIEWED:
+                return "border-yellow-300 bg-yellow-100/30";
+            case JobStatusType.ON_HOLD:
+                return "border-orange-300 bg-orange-300/30";
+            case JobStatusType.APPLIED:
+            case JobStatusType.INTERVIEWED_SCHEDULED:
+                return "border-sky-300";
+            default:
+                return "border-gray-300";
+        }
+    };
 
     return (
         <div
-            className={`border-2 rounded-md p-2 ${job.jobStatus === "denied" ? "border-red-300 bg-red-50" : "border-sky-300"}`}
+            className={`border-4 rounded-md p-2 transition-all duration-500
+                ${getColorList(job.jobStatus)}
+            } shadow-inner`}
         >
             <div className="">
                 <h2 className="text-xl font-bold">
@@ -67,12 +84,14 @@ const Job = ({ job, removeJob }: Thing) => {
                     )}
                 </p>
             </div>
-            <div>
-                <p className="text-gray-400">
-                    Applied on {dateFormatted}, {relative} ago
-                </p>
+            <div className="opacity-60">
+                <div>
+                    <p>
+                        Applied on {dateFormatted}, {relative} ago
+                    </p>
+                </div>
+                <JobSalary job={job} />
             </div>
-            <JobSalary job={job} />
             <div>
                 <p className="font-bold">Status</p>
                 <JobStatus job={job} />

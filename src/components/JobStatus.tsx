@@ -11,8 +11,7 @@ interface JobStatusInput {
 interface JobStatusList {
     [key: string]: {
         title: string;
-        status: JobStatusType,
-        color: string;
+        status: JobStatusType;
     };
 }
 
@@ -21,28 +20,23 @@ const JobStatus = ({ job }: JobStatusInput) => {
     const jobStatusList: JobStatusList = {
         applied: {
             title: "Applied",
-            status: JobStatusType.APPLIED,
-            color: "text-green-500"
+            status: JobStatusType.APPLIED
         },
         interviewScheduled: {
             title: "Interviewed Scheduled",
-            status: JobStatusType.INTERVIEWED_SCHEDULED,
-            color: "text-blue-400"
+            status: JobStatusType.INTERVIEWED_SCHEDULED
         },
         interviewed: {
             title: "Interviewed",
-            status: JobStatusType.INTERVIEWED,
-            color: "text-blue-500"
+            status: JobStatusType.INTERVIEWED
         },
         onHold: {
             title: "On Hold",
-            status: JobStatusType.ON_HOLD,
-            color: "text-orange-400"
+            status: JobStatusType.ON_HOLD
         },
         denied: {
             title: "Denied",
-            status: JobStatusType.DENIED,
-            color: "text-red-400"
+            status: JobStatusType.DENIED
         }
     };
 
@@ -58,7 +52,6 @@ const JobStatus = ({ job }: JobStatusInput) => {
     return (
         <>
             <select
-                className={`${jobStatusList[job.jobStatus].color}`}
                 id="jobStatus"
                 name="jobStatus"
                 value={job.jobStatus}
