@@ -26,6 +26,8 @@ const Job = ({ job, removeJob }: Thing) => {
     const relative = formatDistanceToNowStrict(job.jobApplyDate);
     const getColorList = (status: JobStatusType): string => {
         switch (status) {
+            case JobStatusType.RECRUITER_CONTACTED:
+                return "border-blue-100 bg-blue-100/30 border-dotted";
             case JobStatusType.DENIED:
                 return "border-red-300 bg-red-300/30";
             case JobStatusType.INTERVIEWED:
@@ -34,9 +36,9 @@ const Job = ({ job, removeJob }: Thing) => {
                 return "border-orange-300 bg-orange-300/30";
             case JobStatusType.APPLIED:
             case JobStatusType.INTERVIEWED_SCHEDULED:
-                return "border-sky-300";
+                return "border-sky-300 bg-sky-300/30";
             case JobStatusType.OFFERED:
-                return "border-green-500 bg-green-500/30";
+                return "border-green-500 bg-green-500/30 ";
             default:
                 return "border-gray-300";
         }
@@ -46,7 +48,7 @@ const Job = ({ job, removeJob }: Thing) => {
         <div
             className={`border-4 rounded-md p-2 transition-all duration-500
                 ${getColorList(job.jobStatus)}
-            } shadow-inner`}
+            }`}
         >
             <div className="">
                 <h2 className="text-xl font-bold">

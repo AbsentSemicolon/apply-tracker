@@ -18,6 +18,10 @@ interface JobStatusList {
 const JobStatus = ({ job }: JobStatusInput) => {
     const dispatch = useAppDispatch();
     const jobStatusList: JobStatusList = {
+        recruiterContacted: {
+            title: "Recruiter Contacted",
+            status: JobStatusType.RECRUITER_CONTACTED
+        },
         applied: {
             title: "Applied",
             status: JobStatusType.APPLIED
@@ -39,7 +43,7 @@ const JobStatus = ({ job }: JobStatusInput) => {
             status: JobStatusType.ON_HOLD
         },
         denied: {
-            title: "Denied",
+            title: "Rejected",
             status: JobStatusType.DENIED
         }
     };
