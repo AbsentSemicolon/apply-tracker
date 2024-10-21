@@ -180,11 +180,16 @@ const AddJob = () => {
                     value={formData.jobAppliedFrom}
                     data-testid="jobAppliedFrom"
                 >
+                    <option value="" disabled>
+                        Select one
+                    </option>
                     <option value={JobAppliedFrom.COMPANY}>Company</option>
                     <option value={JobAppliedFrom.DICE}>Dice</option>
                     <option value={JobAppliedFrom.GITHUB}>Github</option>
                     <option value={JobAppliedFrom.INDEED}>Indeed</option>
-                    <option value={JobAppliedFrom.LINKEDIN}>LinkedIn</option>
+                    <option value={JobAppliedFrom.LINKEDIN}>
+                        LinkedIn (Easy Apply)
+                    </option>
                     <option value={JobAppliedFrom.MONSTER}>Monster</option>
                     <option value={JobAppliedFrom.RECRUITER}>Recruiter</option>
                     <option value={JobAppliedFrom.ZIPRECUITER}>
