@@ -1,12 +1,11 @@
-import { ActionCreatorWithPayload, ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
 import { JobAppliedFrom, JobSalaryType, JobStatusType, JobType } from "../lib/types";
 import { appListInitialState, applicationsActions } from "../store/applications-slice";
 
+import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import AddJob from "./AddJob";
 import { MockInstance } from "vitest";
 import { fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "../utils/test-utils";
-import { uiActions } from "../store/ui-slice";
 import uuid from "react-uuid";
 
 vi.mock("react-uuid");
@@ -14,13 +13,9 @@ const mockedUuid = uuid as jest.Mock;
 
 describe("AddJob Component", () => {
     let mockAddItem: MockInstance<ActionCreatorWithPayload<JobType, "applications/addItem">>;
-    let mockClearEditingJob: MockInstance<ActionCreatorWithoutPayload<"applications/clearEditingJob">>;
-    let mockToggleModal: MockInstance<ActionCreatorWithoutPayload<"ui/toggleModal">>;
     beforeEach(() => {
         vi.useFakeTimers();
         mockAddItem = vi.spyOn(applicationsActions, "addItem");
-        mockClearEditingJob = vi.spyOn(applicationsActions, "clearEditingJob");
-        mockToggleModal = vi.spyOn(uiActions, "toggleModal");
 
         // Set system date to 09Aug2024, time does not matter
         // as it's stripped off.
@@ -74,7 +69,6 @@ describe("AddJob Component", () => {
                 jobId: "testid",
                 jobAppliedFrom: JobAppliedFrom.LINKEDIN
             });
-            //expect(mockClearEditingJob).toHaveBeenCalled();
         });
     });
     describe("with job to edit", () => {
@@ -142,7 +136,6 @@ describe("AddJob Component", () => {
                 });
                 fireEvent.click(getByTestId("buttonSubmit"));
                 expect(mockAddItem).toHaveBeenCalledWith(newJob);
-                //expect(mockClearEditingJob).toHaveBeenCalled();
             });
         });
         describe("pressing clear", () => {
