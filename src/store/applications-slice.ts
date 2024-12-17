@@ -1,4 +1,4 @@
-import { AppListSort, JobType, ReplaceAppData } from "../lib/types";
+import { AppListSort, Interview, JobType, ReplaceAppData } from "../lib/types";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export const appListInitialState = {
@@ -65,11 +65,20 @@ const applicationsSlice = createSlice({
             state.editingJob = payload;
         },
         updateItemStatus(state, action) {
+            state.isChanged = true;
             state.items[action.payload.jobId] = {
                 ...state.items[action.payload.jobId],
                 jobStatus: action.payload.status
             };
+        },
+        updateInterviewList(state, action: PayloadAction<{ jobId: string; interviewList: Interview[] }>) {
             state.isChanged = true;
+            const hasInterviewed: boolean = action.payload.interviewList.length > 0;
+            state.items[action.payload.jobId] = {
+                ...state.items[action.payload.jobId],
+                interviewList: action.payload.interviewList,
+                jobHasInterviewed: hasInterviewed
+            };
         },
         clearEditingJob(state) {
             state.editingJob = "";
@@ -78,8 +87,7 @@ const applicationsSlice = createSlice({
 });
 
 export const selectApplicationList = (state) => state.appList;
-export const selectApplicationListIsChanged = (state) =>
-    state.appList.isChanged;
+export const selectApplicationListIsChanged = (state) => state.appList.isChanged;
 export const selectApplicationSort = (state) => state.appList.sort;
 export const selectApplicationItems = (state) => state.appList.items;
 export const selectApplicationEditing = (state) => state.appList.editingJob;

@@ -12,6 +12,7 @@ interface JobStatusList {
     [key: string]: {
         title: string;
         status: JobStatusType;
+        color?: string;
     };
 }
 
@@ -29,6 +30,11 @@ const JobStatus = ({ job }: JobStatusInput) => {
         interviewScheduled: {
             title: "Interviewed Scheduled",
             status: JobStatusType.INTERVIEWED_SCHEDULED
+        },
+        interviewing: {
+            title: "Interviewing",
+            status: JobStatusType.INTERVIEWING,
+            color: "text-blue-400"
         },
         interviewed: {
             title: "Interviewed",
@@ -64,15 +70,11 @@ const JobStatus = ({ job }: JobStatusInput) => {
                 name="jobStatus"
                 value={job.jobStatus}
                 onChange={updateJobStatus}
-                className="border-2 border-gray-500 rounded-md p-1"
+                className="rounded-md border-2 border-gray-500 p-1"
             >
                 {Object.values(jobStatusList).map((status) => {
                     return (
-                        <option
-                            className="text-black"
-                            key={status.status}
-                            value={status.status}
-                        >
+                        <option className="text-black" key={status.status} value={status.status}>
                             {status.title}
                         </option>
                     );

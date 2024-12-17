@@ -7,15 +7,36 @@ export interface JobType {
     jobCompanyLink: string;
     jobCompany: string;
     jobSalaryType: JobSalaryType;
-    jobSalary: string;
     jobSalaryMin: number;
     jobSalaryMax: number;
     jobAppliedFrom: JobAppliedFrom;
+    jobHasInterviewed?: boolean; // For easy tracking of having interviewed
+    interviewList: Interview[];
+}
+
+export interface Interview {
+    date: string;
+    interviewerList: string[];
+    typeList: string[];
+    recruiter: boolean;
+    final: boolean;
+    interviewId: string;
+}
+
+// TODO: Make this used for picking type(s)
+export enum InterviewType {
+    VIDEO = "video",
+    PHONE = "phone",
+    SCREENING = "screening",
+    CODE = "code",
+    TECHNICAL = "technical",
+    PANEL = "panel"
 }
 
 export enum JobStatusType {
     APPLIED = "applied",
     INTERVIEWED_SCHEDULED = "interviewScheduled",
+    INTERVIEWING = "interviewing",
     INTERVIEWED = "interviewed",
     ON_HOLD = "onHold",
     DENIED = "denied",

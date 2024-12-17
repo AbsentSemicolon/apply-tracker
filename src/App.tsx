@@ -4,23 +4,16 @@ import { JobType, SortDirection, UiState } from "./lib/types";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import {
     applicationsActions,
-    selectApplicationEditing,
     selectApplicationItems,
     selectApplicationListIsChanged,
     selectApplicationListViewAs,
     selectApplicationSort
 } from "./store/applications-slice";
-import {
-    fetchApplicationData,
-    fetchBootStrapData,
-    saveApplicationData
-} from "./store/applications-actions";
+import { fetchApplicationData, fetchBootStrapData, saveApplicationData } from "./store/applications-actions";
 import { useAppDispatch, useAppSelector } from "./hooks/hooks";
 
-import AddJob from "./components/AddJob";
 import Charts from "./components/Charts";
 import DialogModal from "./components/DialogModal";
-import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Job from "./components/Job";
 import JobsTable from "./components/JobTable";
@@ -28,15 +21,10 @@ import { uiActions } from "./store/ui-slice";
 import { useEffect } from "react";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 
 const App = () => {
-    const { t } = useTranslation();
     const dispatch = useAppDispatch();
-    const applicationListIsChanged = useAppSelector(
-        selectApplicationListIsChanged
-    );
-    const applicationListEditing = useAppSelector(selectApplicationEditing);
+    const applicationListIsChanged = useAppSelector(selectApplicationListIsChanged);
     const applicationListSort = useAppSelector(selectApplicationSort);
     const applicationListItems = useAppSelector(selectApplicationItems);
     const applicationListViewAs = useAppSelector(selectApplicationListViewAs);
@@ -75,13 +63,7 @@ const App = () => {
                 )
             );
         }
-    }, [
-        applicationListIsChanged,
-        dispatch,
-        applicationListItems,
-        applicationListSort,
-        applicationListViewAs
-    ]);
+    }, [applicationListIsChanged, dispatch, applicationListItems, applicationListSort, applicationListViewAs]);
 
     const sortItems = (items: JobType[]) => {
         if (!items) {
@@ -98,9 +80,7 @@ const App = () => {
                 return sortDir === SortDirection.ASCENDING ? -1 : 1;
             }
 
-            const date =
-                Number(new Date(b.jobApplyDate)) -
-                Number(new Date(a.jobApplyDate));
+            const date = Number(new Date(b.jobApplyDate)) - Number(new Date(a.jobApplyDate));
 
             if (date < 0) {
                 return sortDir === SortDirection.ASCENDING ? 1 : -1;
@@ -119,10 +99,10 @@ const App = () => {
     };
 
     return (
-        <div className="flex flex-col h-full">
-            <div className="flex flex-row h-full overflow-hidden sm:flex-col">
+        <div className="flex h-full flex-col">
+            <div className="flex h-full flex-row overflow-hidden sm:flex-col">
                 <Header />
-                <main className="h-full overflow-y-auto w-full">
+                <main className="h-full w-full overflow-y-auto">
                     {/* Need to compare against 0 to make sure 0 does now show up
                      * on the UI.
                      */}
@@ -130,10 +110,7 @@ const App = () => {
                         <>
                             {applicationListViewAs === "table" ? (
                                 <div>
-                                    <JobsTable
-                                        jobs={sortItems(applicationListItems)}
-                                        removeJob={removeJob}
-                                    />
+                                    <JobsTable jobs={sortItems(applicationListItems)} removeJob={removeJob} />
                                 </div>
                             ) : (
                                 <ResponsiveMasonry
@@ -145,19 +122,11 @@ const App = () => {
                                     }}
                                 >
                                     <Masonry>
-                                        {sortItems(applicationListItems).map(
-                                            (job) => (
-                                                <div
-                                                    className="p-3"
-                                                    key={job.jobId}
-                                                >
-                                                    <Job
-                                                        job={job}
-                                                        removeJob={removeJob}
-                                                    />
-                                                </div>
-                                            )
-                                        )}
+                                        {sortItems(applicationListItems).map((job) => (
+                                            <div className="p-3" key={job.jobId}>
+                                                <Job job={job} removeJob={removeJob} />
+                                            </div>
+                                        ))}
                                     </Masonry>
                                 </ResponsiveMasonry>
                             )}
@@ -165,18 +134,7 @@ const App = () => {
                     )}
                 </main>
             </div>
-            <Footer />
-            <DialogModal
-                isOpened={uiItem.modalIsVisible}
-                closeModal={() => {
-                    dispatch(uiActions.toggleModal(false));
-                    dispatch(applicationsActions.clearEditingJob());
-                }}
-                title={applicationListEditing ? "Edit Job" : t("addJob")}
-                width="600"
-            >
-                <AddJob />
-            </DialogModal>
+            {/* <Footer /> */}
             <DialogModal
                 isOpened={uiItem.chartsModalIsVisible}
                 closeModal={() => {

@@ -1,11 +1,14 @@
 import { JobStatusType, JobType } from "../lib/types";
-import { format, formatDistanceToNowStrict, parseISO } from "date-fns";
 
+import AddJob from "./AddJob";
+import DateFormatted from "./ui/DateFormatted";
+import InterviewList from "./interviewList/edit-interview-list";
 import JobSalary from "./JobSalary";
 import JobStatus from "./JobStatus";
-import { applicationsActions } from "../store/applications-slice";
-import { uiActions } from "../store/ui-slice";
-import { useAppDispatch } from "../hooks/hooks";
+import Link from "./ui/Link";
+import Modal from "./Modal";
+import { Pencil1Icon } from "@radix-ui/react-icons";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface Thing {
@@ -15,17 +18,11 @@ interface Thing {
 
 const Job = ({ job, removeJob }: Thing) => {
     const { t } = useTranslation();
-    const dispatch = useAppDispatch();
-    const { jobId } = job;
+    const [editOpen, setEditIsOpen] = useState(false);
+    const [interviewListOpen, setInterviewListOpen] = useState(false);
     const removeJobClick = () => {
         removeJob(job.jobId);
     };
-    const editJobClick = () => {
-        dispatch(applicationsActions.setItemToEdit(jobId));
-        dispatch(uiActions.toggleModal(true));
-    };
-    const dateFormatted = format(parseISO(job.jobApplyDate), "ddMMMyyyy");
-    const relative = formatDistanceToNowStrict(job.jobApplyDate);
     const getColorList = (status: JobStatusType): string => {
         switch (status) {
             case JobStatusType.RECRUITER_CONTACTED:
@@ -48,83 +45,65 @@ const Job = ({ job, removeJob }: Thing) => {
 
     return (
         <div
-            className={`border-4 rounded-md p-2 transition-all duration-300 ease-out
-                ${getColorList(job.jobStatus)}
-            }`}
+            className={`rounded-md border-4 p-2 transition-all duration-300 ease-out ${getColorList(job.jobStatus)} }`}
         >
-            <div className="">
+            <div className="mb-2">
                 <h2 className="text-xl font-bold">
-                    {job.jobLink ? (
-                        <a
-                            href={job.jobLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500"
-                        >
-                            {job.jobTitle}
-                            <span className="align-super text-xs">
-                                &#x1F517;
-                            </span>
-                        </a>
-                    ) : (
-                        job.jobTitle
-                    )}
+                    {job.jobLink ? <Link text={job.jobTitle} link={job.jobLink} /> : job.jobTitle}
                 </h2>
             </div>
-            <div>
-                <p>
-                    {job.jobCompanyLink ? (
-                        <a
-                            href={job.jobCompanyLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500"
-                        >
-                            {job.jobCompany}
-                            <span className="align-super text-xs">
-                                &#x1F517;
-                            </span>
-                        </a>
-                    ) : (
-                        job.jobCompany
-                    )}
-                </p>
+            <div className="mb-1">
+                <p>{job.jobCompanyLink ? <Link text={job.jobCompany} link={job.jobCompanyLink} /> : job.jobCompany}</p>
             </div>
             <div className="opacity-60">
-                <div>
+                <div className="mb-1">
                     <p>
-                        Applied on {dateFormatted}, {relative} ago
+                        <DateFormatted date={job.jobApplyDate} dateType="Applied" showRelative={true} />
                     </p>
                 </div>
-                <JobSalary job={job} />
+                <div className="mb-1">
+                    <JobSalary job={job} />
+                </div>
             </div>
             {job.jobAppliedFrom && (
-                <div className="opacity-60">
+                <div className="mb-2 opacity-60">
                     <p>
                         Applied through{": "}
-                        {`${t(
-                            `${"jobAppliedFrom"}.${[`${job.jobAppliedFrom}`]}`
-                        )}`}
+                        {`${t(`${"jobAppliedFrom"}.${[`${job.jobAppliedFrom}`]}`)}`}
                     </p>
                 </div>
             )}
-            <div>
+            <div className="mb-2">
                 <p className="font-bold">Status</p>
                 <JobStatus job={job} />
             </div>
-            <div className="flex justify-around border-t-2 border-dotted mt-2 pt-2 border-black">
-                <button
-                    className="bg-slate-200 w-32 py-2 font-bold"
-                    onClick={removeJobClick}
-                >
+            <div>
+                <Modal open={interviewListOpen} onOpenChange={setInterviewListOpen}>
+                    <Modal.Button className="flex items-center gap-1">
+                        Interviews ({job.interviewList?.length || 0}) <Pencil1Icon />
+                    </Modal.Button>
+                    <Modal.Content title="Edit Interview List">
+                        <InterviewList job={job} afterSave={() => setEditIsOpen(false)} />
+                    </Modal.Content>
+                </Modal>
+            </div>
+            <div className="mt-2 flex justify-around border-t-2 border-dotted border-black pt-2">
+                <button className="w-32 bg-slate-200 py-2 font-bold" onClick={removeJobClick}>
                     Remove
                 </button>
-                <button
-                    className="bg-blue-300 text-white w-32 py-2 font-bold"
-                    onClick={editJobClick}
-                >
-                    Edit
-                </button>
+                <div>
+                    <Modal open={editOpen} onOpenChange={setEditIsOpen}>
+                        <Modal.Button>
+                            <div className="flex w-32 items-center justify-center bg-slate-200 py-2 font-bold">
+                                Edit&nbsp;
+                                <Pencil1Icon />
+                            </div>
+                        </Modal.Button>
+                        <Modal.Content title="Edit Job">
+                            <AddJob currentJob={job} afterSave={() => setEditIsOpen(false)} />
+                        </Modal.Content>
+                    </Modal>
+                </div>
             </div>
         </div>
     );

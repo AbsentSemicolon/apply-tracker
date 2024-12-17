@@ -13,9 +13,7 @@ interface AppListTypeSave {
 
 export const fetchBootStrapData = () => {
     return async (dispatch: AppDispatch) => {
-        const localStorageTracker = localStorage.getItem(
-            "applyTrackerData"
-        ) as string;
+        const localStorageTracker = localStorage.getItem("applyTrackerData") as string;
 
         if (localStorageTracker) {
             const parsed = JSON.parse(localStorageTracker);
@@ -35,13 +33,12 @@ export const fetchApplicationData = (isDemo: boolean = false) => {
     return async (dispatch: AppDispatch, getState) => {
         let localStorageTracker: string = "";
 
-        // This is not conventional, but because this should be stored
-        // I'm using getState to grab the items to avoid pulling from
-        // local store all the time.
-        const access_token = getState().appList.accessToken;
-        const gist_id = getState().appList.gistId;
-
         if (!isDemo) {
+            // This is not conventional, but because this should be stored
+            // I'm using getState to grab the items to avoid pulling from
+            // local store all the time.
+            const access_token = getState().appList.accessToken;
+            const gist_id = getState().appList.gistId;
             const response = await gistFetch(gist_id, access_token, "GET");
 
             localStorageTracker = response.files.applications.content;
@@ -57,12 +54,7 @@ export const fetchApplicationData = (isDemo: boolean = false) => {
                 "Senior Front-End React Software Engineer"
             ];
             const fakeJobCompanies = ["Pixel Forge", "Login Loom"];
-            const fakeJobStatuses = [
-                "applied",
-                "onHold",
-                "denied",
-                "recruiterContacted"
-            ];
+            const fakeJobStatuses = ["applied", "onHold", "denied", "recruiterContacted"];
             const fakeJobAppliedFrom = [
                 "linkedin",
                 "recruiter",
@@ -75,24 +67,62 @@ export const fetchApplicationData = (isDemo: boolean = false) => {
                 "other",
                 ""
             ];
+            const getSalaryType = () => {
+                return Math.random() > 0.5 ? "hr" : "yr";
+            };
+            const getSalary = () => {
+                if (Math.random() < 0.2) return {};
+
+                const type = getSalaryType();
+                const minYr = Math.floor(Math.random() * 100000);
+                if (type === "yr") {
+                    return {
+                        type,
+                        min: Math.random() > 0.2 ? minYr : null,
+                        max: minYr + 20000
+                    };
+                }
+
+                const minHr = Math.floor(Math.random() * 100);
+
+                return {
+                    type,
+                    min: Math.random() > 0.2 ? minHr : null,
+                    max: minHr + 20
+                };
+            };
             const getFake = (array: Array<string>): string => {
                 return array[Math.floor(Math.random() * array.length)];
             };
 
             for (let i = 0; i < 30; i++) {
                 const jobId = uuid();
+                const salary = getSalary();
                 const job = {
                     jobTitle: getFake(fakeJobsTitles),
                     jobCompany: getFake(fakeJobCompanies),
                     jobApplyDate: "2024-08-16",
                     jobCompanyLink: "",
                     jobLink: "",
-                    jobSalaryMin: 70.1,
-                    jobSalaryMax: 0,
-                    jobSalaryType: "hr",
+                    jobSalaryMin: salary.min,
+                    jobSalaryMax: salary.max,
+                    jobSalaryType: salary.type,
                     jobStatus: getFake(fakeJobStatuses),
                     jobId,
-                    jobAppliedFrom: getFake(fakeJobAppliedFrom)
+                    jobAppliedFrom: getFake(fakeJobAppliedFrom),
+                    interviewList:
+                        Math.random() > 0.5
+                            ? [
+                                  {
+                                      date: "2024-08-05",
+                                      interviewerList: ["joe", "mike"],
+                                      typeList: ["video"],
+                                      recruiter: false,
+                                      final: true,
+                                      interviewId: uuid()
+                                  }
+                              ]
+                            : []
                 };
 
                 fakeJobs[jobId] = job;
@@ -126,10 +156,7 @@ export const fetchApplicationData = (isDemo: boolean = false) => {
     };
 };
 
-export const saveApplicationData = (
-    appItems: AppListTypeSave,
-    isDemo: boolean = false
-) => {
+export const saveApplicationData = (appItems: AppListTypeSave, isDemo: boolean = false) => {
     // Underscore for function not needed so linter doesn't think
     // it's not used.
     return async (_dispatch: AppDispatch, getState) => {
@@ -155,10 +182,7 @@ export const saveApplicationData = (
                 })
             );
         } else {
-            localStorage.setItem(
-                "applyTracker",
-                JSON.stringify({ items, sort, viewAs })
-            );
+            localStorage.setItem("applyTracker", JSON.stringify({ items, sort, viewAs }));
         }
     };
 };

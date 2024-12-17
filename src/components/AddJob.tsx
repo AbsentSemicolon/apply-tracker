@@ -1,18 +1,8 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import {
-    JobAppliedFrom,
-    JobSalaryType,
-    JobStatusType,
-    JobType
-} from "../lib/types";
-import {
-    applicationsActions,
-    selectApplicationEditing,
-    selectApplicationItems
-} from "../store/applications-slice";
-import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { FormEvent, useEffect, useState } from "react";
+import { JobAppliedFrom, JobSalaryType, JobStatusType, JobType } from "../lib/types";
 
-import { uiActions } from "../store/ui-slice";
+import { applicationsActions } from "../store/applications-slice";
+import { useAppDispatch } from "../hooks/hooks";
 import { useTranslation } from "react-i18next";
 import uuid from "react-uuid";
 
@@ -27,22 +17,19 @@ const defaultJob = {
     jobSalaryType: "",
     jobStatus: "",
     jobId: "",
-    jobAppliedFrom: ""
+    jobAppliedFrom: "",
+    interviewList: []
 };
 
-const AddJob = () => {
+const AddJob = ({ currentJob, afterSave }: { currentJob?: JobType; afterSave: () => void }) => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch();
     const [formData, setFormData] = useState(defaultJob);
-    const applicationItems = useAppSelector(selectApplicationItems);
-    const editingJob = useAppSelector(selectApplicationEditing);
     const currentDate: Date = new Date();
     const currentDateParsed: string = currentDate.toISOString().split("T")[0];
 
     useEffect(() => {
-        if (editingJob) {
-            const currentJob: JobType = applicationItems[editingJob];
-
+        if (currentJob) {
             setFormData({
                 jobTitle: currentJob.jobTitle,
                 jobCompany: currentJob.jobCompany,
@@ -54,7 +41,8 @@ const AddJob = () => {
                 jobSalaryType: currentJob.jobSalaryType,
                 jobId: currentJob.jobId,
                 jobStatus: currentJob.jobStatus,
-                jobAppliedFrom: currentJob.jobAppliedFrom
+                jobAppliedFrom: currentJob.jobAppliedFrom,
+                interviewList: currentJob.interviewList
             });
         } else {
             const newDefaultJob = {
@@ -64,46 +52,32 @@ const AddJob = () => {
             };
             setFormData(newDefaultJob);
         }
-    }, [applicationItems, editingJob, currentDateParsed]);
+    }, [currentJob, currentDateParsed]);
 
-    const submitJob = (event) => {
+    const submitJob = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const newJob = { ...formData };
+        const newJob = Object.fromEntries(new FormData(event.currentTarget)) as object;
 
-        if (!editingJob) {
-            newJob.jobStatus = JobStatusType.APPLIED;
-            newJob.jobId = uuid();
+        // Recasting the object to the proper type.
+        const newJob2 = { ...newJob } as JobType;
+
+        if (!currentJob?.jobId) {
+            newJob2.jobStatus = JobStatusType.APPLIED;
+            newJob2.jobId = uuid();
         } else {
-            const currentJob = applicationItems[editingJob];
-            newJob.jobStatus = currentJob.jobStatus;
-            newJob.jobId = currentJob.jobId;
+            newJob2.jobStatus = currentJob.jobStatus;
+            newJob2.jobId = currentJob.jobId;
         }
 
-        console.log(newJob);
-
-        dispatch(applicationsActions.addItem(newJob as JobType));
-        dispatch(applicationsActions.clearEditingJob());
-        dispatch(uiActions.toggleModal(false));
-        setFormData(defaultJob);
+        dispatch(applicationsActions.addItem(newJob2));
+        afterSave();
     };
 
-    const updateField = (
-        event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
-        const {
-            target: { id, value }
-        } = event;
-
-        setFormData((prevValue) => {
-            return {
-                ...prevValue,
-                [id]: value
-            };
+    const handleClear = () => {
+        setFormData({
+            ...defaultJob,
+            jobApplyDate: currentDateParsed
         });
-    };
-
-    const clearForm = () => {
-        setFormData(defaultJob);
     };
 
     return (
@@ -115,8 +89,7 @@ const AddJob = () => {
                     type="text"
                     name="jobTitle"
                     id="jobTitle"
-                    value={formData.jobTitle}
-                    onChange={updateField}
+                    defaultValue={formData.jobTitle}
                     data-testid="jobTitle"
                     required
                 />
@@ -128,8 +101,7 @@ const AddJob = () => {
                     type="text"
                     name="jobLink"
                     id="jobLink"
-                    value={formData.jobLink}
-                    onChange={updateField}
+                    defaultValue={formData.jobLink}
                 />
             </label>
             <label htmlFor="jobCompany" className="mb-2 block">
@@ -139,8 +111,7 @@ const AddJob = () => {
                     type="text"
                     name="jobCompany"
                     id="jobCompany"
-                    value={formData.jobCompany}
-                    onChange={updateField}
+                    defaultValue={formData.jobCompany}
                     data-testid="jobCompany"
                     required
                 />
@@ -152,8 +123,7 @@ const AddJob = () => {
                     type="text"
                     name="jobCompanyLink"
                     id="jobCompanyLink"
-                    value={formData.jobCompanyLink}
-                    onChange={updateField}
+                    defaultValue={formData.jobCompanyLink}
                 />
             </label>
             <label htmlFor="jobApplyDate" className="mb-2 block">
@@ -163,20 +133,19 @@ const AddJob = () => {
                     type="date"
                     name="jobApplyDate"
                     id="jobApplyDate"
-                    value={formData.jobApplyDate}
-                    onChange={updateField}
+                    defaultValue={formData.jobApplyDate}
                     max={currentDateParsed}
                     data-testid="jobApplyDate"
                     required
                 />
             </label>
-            <label htmlFor="jobAppliedFrom" className="flex-shrink-0 w-24">
+            <label htmlFor="jobAppliedFrom" className="w-24 flex-shrink-0">
                 <p>{t("jobAppliedFromTitle")}</p>
                 <select
                     className="w-full border-2 px-2"
                     name="jobAppliedFrom"
                     id="jobAppliedFrom"
-                    onChange={updateField}
+                    onChange={(e) => setFormData({ ...formData, jobAppliedFrom: e.target.value })}
                     value={formData.jobAppliedFrom}
                     data-testid="jobAppliedFrom"
                 >
@@ -187,14 +156,10 @@ const AddJob = () => {
                     <option value={JobAppliedFrom.DICE}>Dice</option>
                     <option value={JobAppliedFrom.GITHUB}>Github</option>
                     <option value={JobAppliedFrom.INDEED}>Indeed</option>
-                    <option value={JobAppliedFrom.LINKEDIN}>
-                        LinkedIn (Easy Apply)
-                    </option>
+                    <option value={JobAppliedFrom.LINKEDIN}>LinkedIn (Easy Apply)</option>
                     <option value={JobAppliedFrom.MONSTER}>Monster</option>
                     <option value={JobAppliedFrom.RECRUITER}>Recruiter</option>
-                    <option value={JobAppliedFrom.ZIPRECUITER}>
-                        ZipRecruiter
-                    </option>
+                    <option value={JobAppliedFrom.ZIPRECUITER}>ZipRecruiter</option>
                     <option disabled>──────────</option>
                     <option value={JobAppliedFrom.OTHER}>Other</option>
                 </select>
@@ -207,8 +172,8 @@ const AddJob = () => {
                         type="number"
                         name="jobSalaryMin"
                         id="jobSalaryMin"
-                        value={formData.jobSalaryMin}
-                        onChange={updateField}
+                        key={formData.jobSalaryMin}
+                        defaultValue={formData.jobSalaryMin}
                         data-testid="jobSalaryMin"
                     />
                 </label>
@@ -219,18 +184,18 @@ const AddJob = () => {
                         type="number"
                         name="jobSalaryMax"
                         id="jobSalaryMax"
-                        value={formData.jobSalaryMax}
-                        onChange={updateField}
+                        key={formData.jobSalaryMax}
+                        defaultValue={formData.jobSalaryMax}
                         data-testid="jobSalaryMax"
                     />
                 </label>
-                <label htmlFor="jobSalaryType" className="flex-shrink-0 w-24">
+                <label htmlFor="jobSalaryType" className="w-24 flex-shrink-0">
                     <p>{t("jobSalaryType")}</p>
                     <select
                         className="w-full border-2 px-2"
                         name="jobSalaryType"
                         id="jobSalaryType"
-                        onChange={updateField}
+                        onChange={(e) => setFormData({ ...formData, jobSalaryType: e.target.value })}
                         value={formData.jobSalaryType}
                         data-testid="jobSalaryType"
                     >
@@ -239,19 +204,16 @@ const AddJob = () => {
                     </select>
                 </label>
             </div>
-            <div className="flex justify-around border-t-2 py-2 mt-4">
+            <div className="mt-4 flex justify-around border-t-2 py-2">
                 <button
-                    className="bg-slate-200 w-32 py-2 font-bold"
-                    type="button"
-                    onClick={clearForm}
                     data-testid="buttonClear"
+                    type="reset"
+                    className="w-32 bg-blue-300 py-2 font-bold text-white"
+                    onClick={handleClear}
                 >
                     Clear
                 </button>
-                <button
-                    data-testid="buttonSubmit"
-                    className="bg-blue-300 text-white w-32 py-2 font-bold"
-                >
+                <button data-testid="buttonSubmit" type="submit" className="w-32 bg-blue-300 py-2 font-bold text-white">
                     Save
                 </button>
             </div>

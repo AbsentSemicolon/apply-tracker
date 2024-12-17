@@ -14,6 +14,7 @@ const jobStatus = {
     [JobStatusType.DENIED]: "Rejected",
     [JobStatusType.ON_HOLD]: "On Hold",
     [JobStatusType.INTERVIEWED_SCHEDULED]: "Interviewed Scheldued",
+    [JobStatusType.INTERVIEWING]: "Interviewing",
     [JobStatusType.INTERVIEWED]: "Interviewed",
     [JobStatusType.OFFERED]: "Offered",
     [JobStatusType.RECRUITER_CONTACTED]: "Recruiter Contacted"
