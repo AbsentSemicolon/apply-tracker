@@ -54,7 +54,17 @@ export const fetchApplicationData = (isDemo: boolean = false) => {
                 "Senior Front-End React Software Engineer"
             ];
             const fakeJobCompanies = ["Pixel Forge", "Login Loom"];
-            const fakeJobStatuses = ["applied", "onHold", "denied", "recruiterContacted"];
+            const fakeJobStatuses = [
+                "applied",
+                "onHold",
+                "denied",
+                "recruiterContacted",
+                "interviewScheduled",
+                "interviewing",
+                "interviewed",
+                "offered",
+                "accepted"
+            ];
             const fakeJobAppliedFrom = [
                 "linkedin",
                 "recruiter",

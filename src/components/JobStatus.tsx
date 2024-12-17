@@ -1,6 +1,7 @@
 import { JobStatusType, JobType } from "../lib/types";
 
 import { ChangeEvent } from "react";
+import { a } from "vitest/dist/chunks/suite.BMWOKiTe.js";
 import { applicationsActions } from "../store/applications-slice";
 import { useAppDispatch } from "../hooks/hooks";
 
@@ -11,7 +12,7 @@ interface JobStatusInput {
 interface JobStatusList {
     [key: string]: {
         title: string;
-        status: JobStatusType;
+        status: JobStatusType | null;
         color?: string;
     };
 }
@@ -44,6 +45,14 @@ const JobStatus = ({ job }: JobStatusInput) => {
             title: "Offered",
             status: JobStatusType.OFFERED
         },
+        accepted: {
+            title: "Accepted",
+            status: JobStatusType.ACCEPTED
+        },
+        break: {
+            title: "break",
+            status: null
+        },
         onHold: {
             title: "On Hold",
             status: JobStatusType.ON_HOLD
@@ -73,9 +82,13 @@ const JobStatus = ({ job }: JobStatusInput) => {
                 className="rounded-md border-2 border-gray-500 p-1"
             >
                 {Object.values(jobStatusList).map((status) => {
-                    return (
+                    return status.status !== null ? (
                         <option className="text-black" key={status.status} value={status.status}>
                             {status.title}
+                        </option>
+                    ) : (
+                        <option disabled key={status.status} className="text-center">
+                            &#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;
                         </option>
                     );
                 })}

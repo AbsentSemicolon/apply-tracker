@@ -41,7 +41,8 @@ export enum JobStatusType {
     ON_HOLD = "onHold",
     DENIED = "denied",
     OFFERED = "offered",
-    RECRUITER_CONTACTED = "recruiterContacted"
+    RECRUITER_CONTACTED = "recruiterContacted",
+    ACCEPTED = "accepted"
 }
 
 export enum JobSalaryType {

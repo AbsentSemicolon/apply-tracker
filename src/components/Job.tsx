@@ -37,6 +37,8 @@ const Job = ({ job, removeJob }: Thing) => {
             case JobStatusType.INTERVIEWED_SCHEDULED:
                 return "border-sky-300 bg-sky-300/30";
             case JobStatusType.OFFERED:
+                return "border-green-200 bg-green-200/30 ";
+            case JobStatusType.ACCEPTED:
                 return "border-green-500 bg-green-500/30 ";
             default:
                 return "border-gray-300";
