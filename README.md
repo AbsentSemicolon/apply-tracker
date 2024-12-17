@@ -2,6 +2,20 @@
 
 This application is used to track different job applications sent out. Created this as a way to personally track where I had applications out to and as a project to keep my skills sharp. This uses local storage to make things work fast and to keep things simple, at first. This is a living project though and as new things come into I hope to keep updating this.
 
+## To Use
+
+Right now this depends on some manual steps to use beyond the demo setup.
+
+1. Log into [gist.github.com](https://gist.github.com) and create a private gist with the only content as `{}`.
+2. You'll need to create an access token so the application can read the gist.
+    1. Log into [github.com/settings/tokens](https://github.com/settings/tokens).
+    2. Click on **new token (classic)** and give it only **gist** privileges.
+    3. Copy the token given
+3. In **Dev Tools** for your browser of choice you'll create an object in **local storage**.
+    1. Create the key with the name `applyTrackerData`.
+    2. The value will be: `{gistId: "\<your gist id\>", accessToken: "\<access token from step 2.iii\>"}`.
+4. Refresh the site, and make sure to remove `?demo=true` if you were viewing it in demo mode. You should not be able to create entries and it'll save it in the gist.
+
 ## Available Scripts
 
 In the project directory, you can run:
