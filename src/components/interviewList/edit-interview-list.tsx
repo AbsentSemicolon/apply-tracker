@@ -10,9 +10,22 @@ import { applicationsActions } from "../../store/applications-slice";
 import { useAppDispatch } from "../../hooks/hooks";
 import uuid from "react-uuid";
 
+interface FormData {
+    isFinal: boolean;
+    date: string;
+    isRecruiter: boolean;
+}
+
+const defaultFormdata: FormData = {
+    isFinal: false,
+    date: new Date().toISOString().split("T")[0],
+    isRecruiter: false
+};
+
 const InterviewList = ({ job, afterSave }: { job: JobType; afterSave: (arg0: boolean) => void }) => {
+    // use form status hook to get status (pending, success, error)
     const currentDateParsed: string = new Date().toISOString().split("T")[0];
-    const [checked, setChecked] = useState({});
+    const [formData, setFormData] = useState<FormData>(defaultFormdata);
     const dispatch = useAppDispatch();
     const interviewListRef = useRef<TagInputComponent>(null);
     const typeListRef = useRef<TagInputComponent>(null);
@@ -22,13 +35,13 @@ const InterviewList = ({ job, afterSave }: { job: JobType; afterSave: (arg0: boo
     const saveInterview = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsSaving(true);
-        const stuff = Object.fromEntries(new FormData(event.currentTarget));
+        const formEntries = Object.fromEntries(new FormData(event.currentTarget));
         const interviewerList = interviewListRef && interviewListRef.current ? interviewListRef.current.getTags() : [];
         const typeList = typeListRef && typeListRef.current ? typeListRef.current.getTags() : [];
         const interview: Interview = {
-            final: stuff.final ? true : false,
-            date: stuff.date as string,
-            recruiter: stuff.recruiter ? true : false,
+            final: formEntries.final ? true : false,
+            date: formEntries.date as string,
+            recruiter: formEntries.recruiter ? true : false,
             interviewerList,
             typeList,
             interviewId: selectedInterview?.interviewId || uuid()
@@ -41,10 +54,10 @@ const InterviewList = ({ job, afterSave }: { job: JobType; afterSave: (arg0: boo
             );
 
             if (index !== undefined && index !== null && index !== -1) {
-                const blah = [...newJob.interviewList];
-                blah[index] = interview;
+                const newInterviewList = [...newJob.interviewList];
+                newInterviewList[index] = interview;
 
-                newJob.interviewList = blah;
+                newJob.interviewList = newInterviewList;
             }
         } else {
             newJob.interviewList = [...(newJob.interviewList || []), interview] as Interview[];
@@ -56,9 +69,10 @@ const InterviewList = ({ job, afterSave }: { job: JobType; afterSave: (arg0: boo
         setIsSaving(false);
     };
     const editInterview = (interview: Interview) => () => {
-        setChecked({
+        setFormData({
             isRecruiter: interview.recruiter,
-            isFinal: interview.final
+            isFinal: interview.final,
+            date: interview.date
         });
         setInterviewDate(interview.date);
         setSelectedInterview(interview);
@@ -76,11 +90,11 @@ const InterviewList = ({ job, afterSave }: { job: JobType; afterSave: (arg0: boo
         typeListRef?.current?.resetTags();
         setSelectedInterview(null);
         setInterviewDate(currentDateParsed);
-        setChecked({});
+        setFormData(defaultFormdata);
     };
 
     const setCheckbox = (id: string, value: boolean) => {
-        setChecked({ ...checked, [id]: value });
+        setFormData({ ...formData, [id]: value });
     };
 
     return (
@@ -106,9 +120,9 @@ const InterviewList = ({ job, afterSave }: { job: JobType; afterSave: (arg0: boo
                             className="CheckboxRoot"
                             id="isRecruiter"
                             name="recruiter"
-                            checked={checked?.isRecruiter}
+                            checked={formData?.isRecruiter}
                             onCheckedChange={(value) => {
-                                setCheckbox("isRecruiter", value);
+                                setCheckbox("isRecruiter", !!value);
                             }}
                         >
                             <Checkbox.Indicator className="CheckboxIndicator">
@@ -122,14 +136,14 @@ const InterviewList = ({ job, afterSave }: { job: JobType; afterSave: (arg0: boo
                             className="CheckboxRoot"
                             id="isFinal"
                             name="final"
-                            checked={checked?.isFinal}
+                            checked={formData?.isFinal}
                             onCheckedChange={(value) => {
-                                setCheckbox("isFinal", value);
+                                setCheckbox("isFinal", !!value);
                             }}
                         >
                             <Checkbox.Indicator className="CheckboxIndicator">
-                                {!checked && ""}
-                                {checked && <CheckIcon />}
+                                {!formData && ""}
+                                {formData && <CheckIcon />}
                             </Checkbox.Indicator>
                         </Checkbox.Root>
                     </label>

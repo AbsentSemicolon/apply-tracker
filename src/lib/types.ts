@@ -17,12 +17,13 @@ export interface JobType {
 export interface Interview {
     date: string;
     interviewerList: string[];
-    typeList: InterviewType[];
+    typeList: string[];
     recruiter: boolean;
     final: boolean;
     interviewId: string;
 }
 
+// TODO: Make this used for picking type(s)
 export enum InterviewType {
     VIDEO = "video",
     PHONE = "phone",
