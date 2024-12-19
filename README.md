@@ -7,8 +7,8 @@ This application is used to track different job applications sent out. Created t
 Right now this depends on some manual steps to use beyond the demo setup.
 
 1. Log into [gist.github.com](https://gist.github.com) and create a private gist.
-    2. Name the file in the gist as applications. The actual name of the gist can be anything.
-    3. Fill in the content as `{}`. There must be an object for the app to grab, which does not fail gracefully yet.
+    1. Name the file in the gist as applications. The actual name of the gist can be anything.
+    2. Fill in the content as `{}`. There must be an object for the app to grab, which does not fail gracefully yet.
 3. You must create an access token so the application can read the gist.
     1. Log into [github.com/settings/tokens](https://github.com/settings/tokens).
     2. Click on **new token (classic)** and give it only **gist** privileges.
