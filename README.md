@@ -6,15 +6,17 @@ This application is used to track different job applications sent out. Created t
 
 Right now this depends on some manual steps to use beyond the demo setup.
 
-1. Log into [gist.github.com](https://gist.github.com) and create a private gist with the only content as `{}`.
-2. You'll need to create an access token so the application can read the gist.
+1. Log into [gist.github.com](https://gist.github.com) and create a private gist.
+    2. Name the file in the gist as applications. The actual name of the gist can be anything.
+    3. Fill in the content as `{}`. There must be an object for the app to grab, which does not fail gracefully yet.
+3. You must create an access token so the application can read the gist.
     1. Log into [github.com/settings/tokens](https://github.com/settings/tokens).
     2. Click on **new token (classic)** and give it only **gist** privileges.
     3. Copy the token given
-3. In **Dev Tools** for your browser of choice you'll create an object in **local storage**.
+4. In **Dev Tools** for your browser of choice you'll create an object in **local storage**.
     1. Create the key with the name `applyTrackerData`.
     2. The value will be: `{gistId: "\<your gist id\>", accessToken: "\<access token from step 2.iii\>"}`.
-4. Refresh the site, and make sure to remove `?demo=true` if you were viewing it in demo mode. You should not be able to create entries and it'll save it in the gist.
+5. Refresh the site, and remove `?demo=true` if you were viewing it in demo mode. You should now be able to create entries and it'll save it in the gist.
 
 ## Available Scripts
 
